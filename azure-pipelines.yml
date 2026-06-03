@@ -1,19 +1,33 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 
 trigger:
-- main
+- develop
+- test
 
 pool:
-  vmImage: ubuntu-latest
+  name: 'maquina-test' # O el nombre del pool donde está tu agente on-premise
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+# 1. Descargar el código limpio en la carpeta de trabajo del agente
+- checkout: self
+  clean: true
 
+# 2. Apagar la versión anterior de test (si es que ya estaba corriendo)
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    docker compose -f docker-compose.test.yml down
+  displayName: 'Deteniendo contenedor de pruebas anterior'
+  continueOnError: true # Si es la primera vez y no existe, no romperá el pipeline
+
+# 3. Compilar la nueva versión de Docker directamente en tu servidor
+- script: |
+    docker compose -f docker-compose.test.yml build --no-cache
+  displayName: 'Compilando nueva imagen de Docker en Local (Test)'
+
+# 4. Encender el nuevo contenedor en segundo plano (-d)
+- script: |
+    docker compose -f docker-compose.test.yml up -d
+  displayName: 'Desplegando nuevo contenedor en ambiente de Test'
+
+# 5. Limpieza para que el disco del servidor no se llene con imágenes viejas
+- script: |
+    docker image prune -f
+  displayName: 'Limpiando imágenes Docker huérfanas'
