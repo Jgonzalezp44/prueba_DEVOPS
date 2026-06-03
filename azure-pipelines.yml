@@ -1,7 +1,6 @@
 
 trigger:
-- develop
-- test
+- main
 
 pool:
   name: 'Default' # O el nombre del pool donde está tu agente on-premise
