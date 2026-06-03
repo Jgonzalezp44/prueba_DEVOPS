@@ -4,7 +4,7 @@ trigger:
 - test
 
 pool:
-  name: 'maquina-test' # O el nombre del pool donde está tu agente on-premise
+  name: 'Default' # O el nombre del pool donde está tu agente on-premise
 
 steps:
 # 1. Descargar el código limpio en la carpeta de trabajo del agente
