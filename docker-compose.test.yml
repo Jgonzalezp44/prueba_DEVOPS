@@ -1,0 +1,18 @@
+version: "3.3"
+services:
+    aj_fastapi_dss_v360_jp:
+        build: .
+        container_name: dataservice_v360_JGP
+        #stdin_open: true
+        #tty: true
+        ports: 
+         - "87:8080"
+        volumes:
+         - ./logs:/code/app/logs
+
+        networks:
+         - network_usrtest
+ 
+networks:
+   network_usrtest:
+     external: true
